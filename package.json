@@ -66,5 +66,8 @@
       "npm run prettier",
       "npm test"
     ]
+  },
+  "dependencies": {
+    "amqplib": "^0.6.0"
   }
 }

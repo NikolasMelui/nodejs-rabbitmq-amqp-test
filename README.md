@@ -1,8 +1,8 @@
-# 🔥 Nikolasmelui Nodejs Boilerplate
+# Node.js Rabbitmq Amqp Test
 
-[Nikolasmelui Nodejs Boilerplate][nikolasmelui-nodejs-boilerplate] powered by [NikolasMelui][nikolasmelui] is a lightweight nodejs boilerplate using [eslint][eslint], [prettier][prettier], [lint-staged][lint-staged], [husky][husky] and [nodemon][nodemon] onboard. Just clone it, `nmp i`, `npm start` and have fun!
+Test the rabbitmq and amqp with node.js. Made using [Nikolasmelui Nodejs Boilerplate][nikolasmelui-nodejs-boilerplate] powered by [NikolasMelui][nikolasmelui] (lightweight nodejs boilerplate using [eslint][eslint], [prettier][prettier], [lint-staged][lint-staged], [husky][husky] and [nodemon][nodemon] onboard. Just clone it, `nmp i`, `npm start` and have fun!
 
-## Node.js >=14.5 version
+## Node.js >=14.5.0 version
 
 The project is node.js engine stricted by the >=14.5.0 version!
 

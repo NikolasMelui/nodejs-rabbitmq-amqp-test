@@ -1,37 +1,48 @@
 'use strict';
 
 const http = require('http');
-const { APPLICATION_HOST, APPLICATION_PORT } = require('./config');
-const { getApplicationHost, getApplicationPort } = require('./helpers');
-
 const amqp = require('amqplib');
 
-(async () => {
-  try {
-    const connection = await amqp.connect('amqp://localhost:5672');
-    const channel = await connection.createChannel();
-    const assertQueueResult = await channel.assertQueue('jobs');
-    console.log(`Assert queue results: ${assertQueueResult}`);
-    const sendToQueueResult = channel.sendToQueue(
-      'jobs',
-      Buffer.from(
-        JSON.stringify({ login: 'nikolasmelui', password: 'password' }),
-      ),
-    );
-    console.log(`Send to queue results: ${sendToQueueResult}`);
-  } catch (error) {
-    console.error(error);
-  }
-})();
+const { APPLICATION_HOST, APPLICATION_PORT } = require('./config');
+
+const publish = async () => {
+  const connection = await amqp.connect('amqp://localhost:5672');
+  const channel = await connection.createChannel();
+  const assertQueueResult = await channel.assertQueue('jobs');
+  console.log(`Assert queue results: ${JSON.stringify(assertQueueResult)}`);
+
+  const randomNumber = Math.floor(Math.random() * (9999 - 1000) + 1000);
+  const sendToQueueResult = channel.sendToQueue(
+    'jobs',
+    Buffer.from(
+      JSON.stringify({
+        randomNumber,
+      }),
+    ),
+  );
+  if (!sendToQueueResult) throw new Error('Something went wrong');
+  return randomNumber;
+};
 
 http
-  .createServer((req, res) => {
-    res.writeHead(200, 'OK', { 'Content-Type': 'text/plain' });
-    res.end(
-      `Hello from ${getApplicationHost(req)}:${getApplicationPort(
-        req,
-      )} and welcome to the nikolasmelui-node-boilerplate!`,
-    );
+  .createServer(async (req, res) => {
+    const { url } = req;
+
+    if (url === '/publish') {
+      try {
+        const publishResult = await publish();
+        console.log(publishResult);
+        if (!publishResult) throw new Error('Publishing error');
+        const resultMessage = `${publishResult} published to the queue`;
+        console.log(resultMessage);
+        res.writeHead(200, 'OK', { 'Content-Type': 'text/plain' });
+        res.end(resultMessage);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    res.writeHead(404);
+    res.end();
   })
   .listen(APPLICATION_PORT, APPLICATION_HOST, () =>
     console.log(
